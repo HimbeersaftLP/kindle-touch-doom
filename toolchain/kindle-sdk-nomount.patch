@@ -1,42 +1,42 @@
 diff --git a/gen-sdk.sh b/gen-sdk.sh
-index 96f14ad..44d89f4 100644
+index 9f0bfaa..5ffe446 100755
 --- a/gen-sdk.sh
 +++ b/gen-sdk.sh
 @@ -1,6 +1,6 @@
- #!/bin/sh
+ #!/bin/bash
  
 -set -e # Stop on error
-+set -xe # Stop on error
++set -xe # Stop on error and print executed lines
  
  RM_If_Exists() {
      if [ -d $1 ] || [ -f $1 ]; then
-@@ -17,7 +17,7 @@ Setup_SDK() {
+@@ -19,7 +19,7 @@ Setup_SDK() {
  
      # Just in case
      set +e
--    sudo umount "./cache/${tc_target}/firmware/mnt"
-+    # sudo umount "./cache/${tc_target}/firmware/mnt"
+-    sudo umount ./cache/${tc_target}/firmware*/mnt
++    # sudo umount ./cache/${tc_target}/firmware*/mnt
      set -e
      
      case $sdk_target in
-@@ -89,7 +89,10 @@ Setup_SDK() {
-     cd "./cache/${tc_target}/firmware/"
-         gunzip rootfs.img.gz
-         mkdir mnt
--        sudo mount -o loop rootfs.img mnt
-+        # sudo mount -o loop rootfs.img mnt
-+        set +e # will error because it can't create two symlinks
-+        7zz x rootfs.img -omnt/ -snld
-+        set -e
-     cd ../../..
+@@ -106,7 +106,10 @@ Setup_SDK() {
  
-     echo "[*] Wiping target pkgconfig files"
-@@ -183,7 +186,7 @@ Setup_SDK() {
+           gunzip rootfs.img.gz
+           mkdir -p mnt
+-          sudo mount -o loop rootfs.img mnt
++          # sudo mount -o loop rootfs.img mnt
++          set +e # will error because it can't create two symlinks
++          7zz x rootfs.img -omnt/ -snld
++          set -e
+       cd ../../..
+     done
+ 
+@@ -209,7 +212,7 @@ Setup_SDK() {
+ 
  
      echo "[*] Cleaning up"
-     cd "./cache/${tc_target}/firmware/"
--        sudo umount mnt
-+        # sudo umount mnt
-     cd ../../..
+-    sudo umount ./cache/${tc_target}/firmware*/mnt
++    # sudo umount ./cache/${tc_target}/firmware*/mnt
  
      echo "===================================================================================================="
+     echo "[*] Kindle (unofficial) SDK Installed"
